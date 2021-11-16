@@ -108,12 +108,6 @@ function generateChoices() {
 
 const QUESTIONS = [
     {
-        type: "list",
-        name: "license",
-        message: "Please choose a license:",
-        choices: CHOICES
-    },
-    {
         type: "input",
         name: "gitUsername",
         message: "What is your Github Username?"
@@ -133,6 +127,12 @@ const QUESTIONS = [
         message: "What is the title of the Readme?"
     },
     {
+        type: "list",
+        name: "license",
+        message: "Please choose a license:",
+        choices: CHOICES
+    },
+    {
         type: "input",
         name: "description",
         message: "Enter the Readme description:"
@@ -140,7 +140,7 @@ const QUESTIONS = [
     {
         type: "input",
         name: "usage_information",
-        message: "Enter the Readme description:"
+        message: "Please provide usage information"
     }
 
 ]
@@ -163,15 +163,30 @@ const README = function (responses) {
     this.title = `#  ${responses.title}\n`;
     this.licenseBadge = ALL_LICENSES_BY_KEYS[responses.license] + `\n`;
     this.description = `## Description \n\n${responses.description}\n`;
-    this.license = responses.license;
+    this.tableOfContent =
+        `## Table of Contents
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [License](#license)
+    - [Contributing](#contributing)
+    - [Tests](#tests)
+    - [Questions](#questions)`
+
+    this.installation = `## Installation \n\n${responses.installation}\n`;
+    this.usage = `## Usage \n\n${responses.usage}\n`;
+    this.license = `## License \n\n${responses.license}\n`;
+this.contributing
+this.tests = 
+    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\nGithub Username: ${responses.gitUsername}\nEmail: ${responses.email}\n`;
     this.render = function () {
-        this.title + this.licenseBadge + this.description
+        return this.title + this.licenseBadge + this.description
     }
 }
 
 function writeReadmeFile(readmeString) {
     const fileName = "README.md";
-    fs.writeFile(filename, readmeString, (err) =>
+    console.log(readmeString)
+    fs.writeFile(fileName, readmeString, (err) => 
         err ? console.log(err) : console.log("Success!")
     );
 }
