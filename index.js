@@ -1,7 +1,10 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 
-const QUESTIONS_ARRAY = [
+const LICENSES_LIST = ["a", "b", "c"];
+const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+const QUESTIONS = [
     {
         type: "input",
         name: "gitUsername",
@@ -10,49 +13,49 @@ const QUESTIONS_ARRAY = [
     {
         type: "input",
         name: "email",
-        message: "What is your email?"
+        message: "What is your email?",
+        validate: function (input) {
+            if (EMAIL_REGEX.test(input)) return true;
+            return "Please enter a valid email!"
+        }
     },
     {
         type: "input",
         name: "title",
-        message: "What is the title of the readme file?"
+        message: "What is the title of the Readme?"
+    },
+    {
+        type: "list",
+        name: "license",
+        message: "Please choose a license:",
+        choices: LICENSES_LIST
     },
     {
         type: "input",
-        name: "title",
-        message: "What is the title of the readme file?"
-    }
+        name: "description",
+        message: "Enter the Readme description:"
+    },
 
 ]
 
-var contentString = "";
+
+const README = function (responses) {
+    this.title = "# " + responses.title;
+}
+
 
 
 
 inquirer
-    .prompt([
-        {
-            type: "input",
-            name: "name",
-            message: "What is your name?",
-        },
-        {
-            type: "checkbox",
-            message: "What languages do you know?",
-            name: "stack",
-            choices: ["HTML", "CSS", "JavaScript", "MySQL"],
-        },
-        {
-            type: "list",
-            message: "What is your preferred method of communication?",
-            name: "contact",
-            choices: ["email", "phone", "telekinesis"],
-        },
-    ])
-    .then((data) => {
-        formulateString(data);
-        writeReadmeFile();
+    .prompt(QUESTIONS)
+    .then((responses) => {
+        formulateString(responses);
+        //writeReadmeFile();
     });
+
+function formulateString(data) {
+    console.log(data);
+}
 
 function writeReadmeFile() {
     const fileName = "README.md";
@@ -60,3 +63,4 @@ function writeReadmeFile() {
         err ? console.log(err) : console.log("Success!")
     );
 }
+
