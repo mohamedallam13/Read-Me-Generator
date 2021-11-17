@@ -141,6 +141,17 @@ const QUESTIONS = [
         type: "input",
         name: "usage_information",
         message: "Please provide usage information"
+    },
+    {
+        type: "input",
+        name: "installation",
+        message: "Please provide installation steps, comma separated:"
+    },
+    {
+        type: "input",
+        name: "contributing",
+        message: "Please provide contibution instructions (If left blank, a default response will be provided):",
+        default: "Please follow [Contributor Covenant](https://www.contributor-covenant.org/), which is the is an industry standard."
     }
 
 ]
@@ -149,43 +160,33 @@ const QUESTIONS = [
 inquirer
     .prompt(QUESTIONS)
     .then((responses) => {
-        var readmeString = formulateString(responses);
-        writeReadmeFile(readmeString);
+        var readMe = new README(responses);
+        writeReadmeFile(readMe);
     });
 
-function formulateString(responses) {
-    console.log(responses);
-    var readMe = new README(responses);
-    return readMe.render();
-}
-
 const README = function (responses) {
-    this.title = `#  ${responses.title}\n`;
-    this.licenseBadge = ALL_LICENSES_BY_KEYS[responses.license] + `\n`;
-    this.description = `## Description \n\n${responses.description}\n`;
-    this.tableOfContent =
-    `## Table of Contents
-    * [Installation](#installation)
-    * [Usage](#usage)
-    * [License](#license)
-    * [Contributing](#contributing)
-    * [Tests](#tests)
-    * [Questions](#questions)`
-
-    this.installation = `## Installation \n\n${responses.installation}\n`;
-    this.usage = `## Usage \n\n${responses.usage_information}\n`;
-    this.license = `## License \n\n${responses.license}\n`;
-    this.contributing = `## Contributing \n\nTest\n`;
-    this.tests = `## Tests \n\nTest\n`;
-    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\nGithub Username: ${responses.gitUsername}\nEmail: ${responses.email}\n`;
+    this.fileName =  "README.md";
+    this.title = `#  ${responses.title}\n\n`;
+    var licenseBadge = ALL_LICENSES_BY_KEYS[responses.license] + `\n\n`;
+    var contributionBadge = responses.contributing.includes("https://www.contributor-covenant.org/")? "[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)" : "";
+    this.badges = licenseBadge + " " + contributionBadge + '\n\n';
+    this.description = `## Description \n${responses.description}\n\n`;
+    this.tableOfContent = `## Table of Contents\n\n* [Installation](#installation)\n* [Usage](#usage)\n* [License](#license)\n* [Contributing](#contributing)\n* [Tests](#tests)\n* [Questions](#questions)\n\n`
+    var installationsSteps = "* " + responses.installation.split(",").join("\n* ");
+    this.installation = `## Installation \n\n${installationsSteps}\n\n`;
+    this.usage = `## Usage \n\n${responses.usage_information}\n\n`;
+    this.license = `## License \n\n${responses.license}\n\n`;
+    this.contributing = `## Contributing \n\n${responses.contributing}\n\n`;
+    this.tests = `## Tests \n\nTest\n\n`;
+    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\n\nGithub Username: [${responses.gitUsername}](${responses.gitUsername.replace("@","https://github.com/")})\n\nEmail: [${responses.email}](mailto:${responses.email})\n\n`;
     this.render = function () {
-        return this.title + this.licenseBadge + this.description + this.tableOfContent + this.installation + this.usage + this.license + this.contributing + this.tests + this.questions
+        return this.title + this.badges + this.description + this.tableOfContent + this.installation + this.usage + this.license + this.contributing + this.tests + this.questions
     }
 }
 
-function writeReadmeFile(readmeString) {
-    const fileName = "README.md";
-    console.log(readmeString)
+function writeReadmeFile(readMe) {
+    const fileName = readMe.fileName;
+    const readmeString = readMe.render();
     fs.writeFile(fileName, readmeString, (err) =>
         err ? console.log(err) : console.log("Success!")
     );
