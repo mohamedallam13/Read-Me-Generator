@@ -152,8 +152,12 @@ const QUESTIONS = [
         name: "contributing",
         message: "Please provide contibution instructions (If left blank, a default response will be provided):",
         default: "Please follow [Contributor Covenant](https://www.contributor-covenant.org/), which is the is an industry standard."
+    },
+    {
+        type: "input",
+        name: "testing",
+        message: "Please provide testing methods:",
     }
-
 ]
 
 
@@ -172,13 +176,13 @@ const README = function (responses) {
     this.badges = licenseBadge + " " + contributionBadge + '\n\n';
     this.description = `## Description \n${responses.description}\n\n`;
     this.tableOfContent = `## Table of Contents\n\n* [Installation](#installation)\n* [Usage](#usage)\n* [License](#license)\n* [Contributing](#contributing)\n* [Tests](#tests)\n* [Questions](#questions)\n\n`
-    var installationsSteps = "* " + responses.installation.split(",").join("\n* ");
-    this.installation = `## Installation \n\n${installationsSteps}\n\n`;
+    var installationsSteps = responses.installation.split(",").join("\n");
+    this.installation = `## Installation \n\nFollowing are the steps of installation\n\n\`\`\`\n${installationsSteps}\n\`\`\`\n\n`;
     this.usage = `## Usage \n\n${responses.usage_information}\n\n`;
     this.license = `## License \n\n${responses.license}\n\n`;
     this.contributing = `## Contributing \n\n${responses.contributing}\n\n`;
-    this.tests = `## Tests \n\nTest\n\n`;
-    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\n\nGithub Username: [${responses.gitUsername}](${responses.gitUsername.replace("@","https://github.com/")})\n\nEmail: [${responses.email}](mailto:${responses.email})\n\n`;
+    this.tests = `## Tests\n\nFollowing are the steps for testing\n\n\`\`\`\n${responses.testing}\n\`\`\`\n\n`;
+    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\n\nGithub Username: [${responses.gitUsername}](${"https://github.com/" + responses.gitUsername.replace("@","")})\n\nEmail: [${responses.email}](mailto:${responses.email})\n\n`;
     this.render = function () {
         return this.title + this.badges + this.description + this.tableOfContent + this.installation + this.usage + this.license + this.contributing + this.tests + this.questions
     }
