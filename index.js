@@ -191,7 +191,7 @@ const README = function (responses) {
 function writeReadmeFile(readMe) {
     const fileName = readMe.fileName;
     const readmeString = readMe.render();
-    fs.writeFile(fileName, readmeString, (err) =>
+    fs.writeFile("./created/" + fileName, readmeString, (err) =>
         err ? console.log(err) : console.log("Success!")
     );
 }
