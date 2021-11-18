@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 
+// All Licenses Obj, with categories. Source: https://gist.github.com/lukas-h/2a5d00690736b4c3a7ba (better be imported via an API)
+
 const LICENSES = {
     "Apache":
     {
@@ -93,6 +95,8 @@ const ALL_LICENSES_BY_KEYS = {};
 
 const CHOICES = generateChoices();
 
+// function that generates choices array out of the licenses object hard coded above as well as the object from which the badge is fetched
+
 function generateChoices() {
     var choicesArr = []
     Object.keys(LICENSES).forEach(type => {
@@ -105,6 +109,8 @@ function generateChoices() {
     })
     return choicesArr;
 }
+
+// Questions list
 
 const QUESTIONS = [
     {
@@ -161,6 +167,8 @@ const QUESTIONS = [
 ]
 
 
+// Main Function
+
 inquirer
     .prompt(QUESTIONS)
     .then((responses) => {
@@ -168,11 +176,13 @@ inquirer
         writeReadmeFile(readMe);
     });
 
+
+// README Constructor
 const README = function (responses) {
-    this.fileName =  "README.md";
+    this.fileName = "README.md";
     this.title = `#  ${responses.title}\n\n`;
     var licenseBadge = ALL_LICENSES_BY_KEYS[responses.license] + `\n\n`;
-    var contributionBadge = responses.contributing.includes("https://www.contributor-covenant.org/")? "[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)" : "";
+    var contributionBadge = responses.contributing.includes("https://www.contributor-covenant.org/") ? "[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)" : "";
     this.badges = licenseBadge + " " + contributionBadge + '\n\n';
     this.description = `## Description \n${responses.description}\n\n`;
     this.tableOfContent = `## Table of Contents\n\n* [Installation](#installation)\n* [Usage](#usage)\n* [License](#license)\n* [Contributing](#contributing)\n* [Tests](#tests)\n* [Questions](#questions)\n\n`
@@ -182,11 +192,13 @@ const README = function (responses) {
     this.license = `## License \n\n${responses.license}\n\n`;
     this.contributing = `## Contributing \n\n${responses.contributing}\n\n`;
     this.tests = `## Tests\n\nFollowing are the steps for testing\n\n\`\`\`\n${responses.testing}\n\`\`\`\n\n`;
-    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\n\nGithub Username: [${responses.gitUsername}](${"https://github.com/" + responses.gitUsername.replace("@","")})\n\nEmail: [${responses.email}](mailto:${responses.email})\n\n`;
+    this.questions = `## Questions \n\n If you have any more questions, please contact me here:\n\nGithub Username: [${responses.gitUsername}](${"https://github.com/" + responses.gitUsername.replace("@", "")})\n\nEmail: [${responses.email}](mailto:${responses.email})\n\n`;
     this.render = function () {
         return this.title + this.badges + this.description + this.tableOfContent + this.installation + this.usage + this.license + this.contributing + this.tests + this.questions
     }
 }
+
+// Function that writes the file to the "created" folder
 
 function writeReadmeFile(readMe) {
     const fileName = readMe.fileName;
